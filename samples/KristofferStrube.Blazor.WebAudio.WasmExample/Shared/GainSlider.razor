@@ -1,0 +1,32 @@
+﻿<label for=@inputId>Gain</label>
+<input @bind-value=Gain
+       @bind-value:event="oninput"
+       @bind-value:after=GainUpdatedAsync
+       id=@inputId
+       type="range"
+       min="0"
+       max="1"
+       step="0.01"
+       style="width:min(200px, 100%);"/>
+<span class="badge bg-primary">@Math.Round(Gain*100, 0)%</span>
+
+@code {
+    private string inputId = $"gain_{Guid.NewGuid()}"[..9];
+
+    [Parameter, EditorRequired]
+    public GainNode? GainNode { get; set; }
+
+    public float Gain { get; private set; } = 0.05f;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await GainUpdatedAsync();
+    }
+
+    public async Task GainUpdatedAsync()
+    {
+        if (GainNode is null) return;
+        var audioParam = await GainNode.GetGainAsync();
+        await audioParam.SetValueAsync(Gain);
+    }
+}

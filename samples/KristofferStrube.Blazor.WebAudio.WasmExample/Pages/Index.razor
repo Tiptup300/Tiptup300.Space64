@@ -1,0 +1,83 @@
+﻿@page "/"
+@using KristofferStrube.Blazor.DOM
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+<PageTitle>WebAudio - Playing Sound</PageTitle>
+
+Status:
+<span class="badge @(state switch { AudioContextState.Closed => "bg-danger", AudioContextState.Suspended => "bg-warning", _ => "bg-success" })">
+    @state
+</span>
+<div style="display:flex; flex-direction:row; gap:5px;">
+    @if (state is AudioContextState.Suspended)
+    {
+        <button class="btn btn-success" @onclick="() => context.ResumeAsync()">Resume</button>
+    }
+    else if (state is AudioContextState.Running)
+    {
+        <button class="btn btn-warning" @onclick="() => context.SuspendAsync()">Suspend</button>
+        <button class="btn btn-danger" @onclick="() => context.CloseAsync()">Close</button>
+
+        @if (oscillator is null)
+        {
+            <button class="btn btn-success" @onclick=PlaySound>Play Sound 🔊</button>
+        }
+        else
+        {
+            <button class="btn btn-warning" @onclick=StopSound>Stop Sound 🔊</button>
+        }
+    }
+</div>
+<GainSlider GainNode=gainNode />
+
+@code {
+    AudioContext context = default!;
+    GainNode gainNode = default!;
+    EventListener<Event> stateChangeListener = default!;
+    AudioContextState state = AudioContextState.Closed;
+    OscillatorNode? oscillator;
+
+    protected override async Task OnInitializedAsync()
+    {
+        context = await AudioContext.CreateAsync(JSRuntime);
+
+        AudioDestinationNode destination = await context.GetDestinationAsync();
+        gainNode = await context.CreateGainAsync();
+        await gainNode.ConnectAsync(destination);
+
+        stateChangeListener = await context.AddOnStateChangeEventListener(async (e) =>
+        {
+            state = await context.GetStateAsync();
+            StateHasChanged();
+        });
+        state = await context.GetStateAsync();
+    }
+
+    public async Task PlaySound()
+    {
+
+        OscillatorOptions oscillatorOptions = new()
+            {
+                Type = OscillatorType.Sine,
+                Frequency = Random.Shared.Next(100, 500)
+            };
+        oscillator = await OscillatorNode.CreateAsync(JSRuntime, context, oscillatorOptions);
+        await oscillator.ConnectAsync(gainNode);
+        await oscillator.StartAsync();
+    }
+
+    public async Task StopSound()
+    {
+        if (oscillator is null) return;
+        await oscillator.StopAsync();
+        oscillator = null;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await context.RemoveOnStateChangeEventListener(stateChangeListener);
+        await StopSound();
+    }
+}
+
+
