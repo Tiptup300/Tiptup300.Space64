@@ -7,7 +7,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KristofferStrube.Blazor.Web
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KristofferStrube.Blazor.WebAudio.WasmExample", "samples\KristofferStrube.Blazor.WebAudio.WasmExample\KristofferStrube.Blazor.WebAudio.WasmExample.csproj", "{B0FCE7ED-FCC5-4140-B732-2ABEC4848441}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiptup300.AudioPlayerExample.Library", "Tiptup300.AudioPlayerExample.Library\Tiptup300.AudioPlayerExample.Library.csproj", "{0E130145-AE50-4104-9B52-9C982E7B084F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiptup300.AudioPlayerExample.Library", "Tiptup300.AudioPlayerExample.Library\Tiptup300.AudioPlayerExample.Library.csproj", "{0E130145-AE50-4104-9B52-9C982E7B084F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0F962977-9306-4E0A-8F25-71E3AE833121}"
+	ProjectSection(SolutionItems) = preProject
+		diagram.png = diagram.png
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
